@@ -64,7 +64,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'lambda_deploy=lambda_deploy:main',
+            'lambda_deploy=lambda_deploy',
         ],
     },
 )
