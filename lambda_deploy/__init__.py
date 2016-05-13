@@ -31,7 +31,7 @@ def process(files):
         #os.remove(temp_path)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Deploy AWS Lambda Functions")
 
     parser.add_argument('file_names', metavar='file_name',
@@ -40,3 +40,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     process(args.file_names)
+
+
+if __name__ == "__main__":
+    main()
