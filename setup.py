@@ -16,7 +16,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='lambda_deploy',
 
-    version='1.0.2',
+    version='1.0.0',
 
     description='AWS Lambda functions deployment tool',
     long_description=long_description,
