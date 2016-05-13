@@ -14,7 +14,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='lambda_deploy',
+    name='aws-lambda-deploy',
 
     version='1.0.0',
 
@@ -64,7 +64,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'lambda_deploy=lambda_deploy:main',
+            'aws-lambda-deploy=lambda_deploy:main',
         ],
     },
 )
