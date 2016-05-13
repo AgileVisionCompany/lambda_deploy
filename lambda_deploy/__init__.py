@@ -1,70 +1,42 @@
-"""AWS Lambda functions deployment tool
-See:
-https://github.com/AgileVisionCompany/lambda_deploy
-"""
+import argparse
+import tempfile
+import zipfile
+import boto3
+import os
+from os.path import basename
 
-from setuptools import setup, find_packages
-from codecs import open
-from os import path
-
-here = path.abspath(path.dirname(__file__))
-
-# Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
-
-setup(
-    name='lambda_deploy',
-
-    version='1.0.0',
-
-    description='AWS Lambda functions deployment tool',
-    long_description=long_description,
-
-    # The project's main homepage.
-    url='https://github.com/AgileVisionCompany/lambda_deploy',
-
-    # Author details
-    author='AgileVision sp. z o.o.',
-    author_email='contact@agilevision.pl',
-
-    # Choose your license
-    license='MIT',
-
-    # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-    ],
+from extractors import extract_metadata
 
 
-    keywords='aws lambda deployment',
+def process(files):
+    client = boto3.client('lambda')
 
-    packages=find_packages(exclude=['lambda_deploy', 'tests']),
+    for file in files:
+        metadata = extract_metadata(file)
+        fd, temp_path = tempfile.mkstemp()
+        os.close(fd)
+        with open(temp_path, 'w') as temp_file:
+            zip_archive = zipfile.ZipFile(temp_file, 'w')
+            zip_archive.write(file, arcname=basename(file))
+            zip_archive.close()
 
-    install_requires=['boto3'],
+        with open(temp_path, 'rb') as temp_file:
+            client.update_function_code(
+                FunctionName=metadata['function_name'],
+                ZipFile=temp_file.read(),
+                Publish=True
+            )
 
-    extras_require={
-        'dev': ['check-manifest'],
-        'test': ['coverage'],
-    },
+        print(temp_path)
+        #os.remove(temp_path)
 
-    package_data={
-    },
 
-    data_files=[],
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Deploy AWS Lambda Functions")
 
-    entry_points={
-        'console_scripts': [
-            'lambda_deploy=lambda_deploy:main',
-        ],
-    },
-)
+    parser.add_argument('file_names', metavar='file_name',
+                        type=str, nargs='+',
+                        help='files with lambda functions to process')
+
+    args = parser.parse_args()
+    process(args.file_names)
