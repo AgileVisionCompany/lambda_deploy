@@ -27,8 +27,7 @@ def process(files):
                 Publish=True
             )
 
-        print(temp_path)
-        #os.remove(temp_path)
+        os.remove(temp_path)
 
 
 def main():

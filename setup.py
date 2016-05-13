@@ -16,7 +16,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='lambda_deploy',
 
-    version='1.0.0',
+    version='1.0.2',
 
     description='AWS Lambda functions deployment tool',
     long_description=long_description,
@@ -48,7 +48,7 @@ setup(
 
     keywords='aws lambda deployment',
 
-    packages=find_packages(exclude=['lambda_deploy', 'tests']),
+    packages=find_packages(exclude=['tests']),
 
     install_requires=['boto3'],
 
